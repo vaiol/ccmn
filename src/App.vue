@@ -45,7 +45,7 @@ export default {
           url: "/analytics"
         },
         {
-          icon: "contact_mail",
+          icon: "map",
           text: "Location",
           url: "/location"
         }
