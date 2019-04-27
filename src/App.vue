@@ -1,37 +1,55 @@
 <template>
   <v-app>
-    <v-toolbar app>
-      <v-toolbar-title class="headline text-uppercase">
-        <span>Vuetify</span>
-        <span class="font-weight-light">MATERIAL DESIGN</span>
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn
-        flat
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-      >
-        <span class="mr-2">Latest Release</span>
-      </v-btn>
+    <v-navigation-drawer
+            fixed
+            v-model="drawer"
+            app
+    >
+      <v-list dense>
+        <v-list-tile v-for="item in routes" :key="item.url" @click="$router.push(item.url)">
+          <v-list-tile-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>{{ item.text }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-toolbar color="indigo" dark fixed app>
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-title>Application</v-toolbar-title>
     </v-toolbar>
 
     <v-content>
-      <HelloWorld/>
+      <router-view></router-view>
     </v-content>
+
+    <v-footer color="indigo" app inset>
+      <span class="white--text">&copy; 2019</span>
+    </v-footer>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  },
   data () {
     return {
-      //
+      drawer: null,
+      routes: [
+        {
+          icon: "contact_mail",
+          text: "Analytics",
+          url: "/analytics"
+        },
+        {
+          icon: "contact_mail",
+          text: "Location",
+          url: "/location"
+        }
+      ]
     }
   }
 }
