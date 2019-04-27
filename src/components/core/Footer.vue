@@ -11,7 +11,7 @@
     <span class="font-weight-light copyright">
       &copy;
       {{ new Date().getFullYear() }}
-      <a target="_blank">Sashka & Marishka</a>,
+      <a target="_blank">Sashka & Marishka</a>
       <v-icon color="tertiary" size="17">mdi-heart</v-icon>
     </span>
   </v-footer>

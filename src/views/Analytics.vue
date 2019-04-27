@@ -1,6 +1,15 @@
 <template>
   <v-container fill-height fluid grid-list-xl>
     <v-layout wrap>
+      <date-picker
+        :input-class="'form-control'"
+        :first-day-of-week="1"
+        :not-after="new Date()"
+        v-model="date"
+        :lang="lang"
+        range
+        :shortcuts="shortcuts"
+      ></date-picker>
       <v-flex md12 sm12 lg4>
         <material-chart-card
           :data="dailySalesChart.data"
@@ -275,9 +284,98 @@
 </template>
 
 <script>
+import DatePicker from "vue2-datepicker";
+import moment from "moment";
+
 export default {
+  components: {
+    DatePicker
+  },
   data() {
     return {
+      date: [new Date(), new Date()],
+      interval: "hourly",
+      shortcuts: [
+        {
+          text: "Today",
+          onClick: () => {
+            this.date = [new Date(), new Date()];
+            this.interval = "hourly";
+          }
+        },
+        {
+          text: "Yesterday",
+          onClick: () => {
+            this.date = [
+              new Date(Date.now() - 24 * 60 * 60 * 1000),
+              new Date(Date.now() - 24 * 60 * 60 * 1000)
+            ];
+            this.interval = "hourly";
+          }
+        },
+        {
+          text: "Last week",
+          onClick: () => {
+            this.date = [
+              new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+              new Date()
+            ];
+            this.interval = "daily";
+          }
+        },
+        {
+          text: "Last month",
+          onClick: () => {
+            this.date = [
+              new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+              new Date()
+            ];
+            this.interval = "daily";
+          }
+        }
+      ],
+      lang: {
+        days: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        months: [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec"
+        ],
+        pickers: [
+          "next 7 days",
+          "next 30 days",
+          "previous 7 days",
+          "previous 30 days"
+        ],
+        placeholder: {
+          date: "Select Date",
+          dateRange: "Select Date Range"
+        }
+      },
+      site: "",
+      sitesOptions: [],
+      totalVisitors: "n/a",
+      dwellTime: "n/a",
+      peakHour: "n/a",
+      conversionRate: "n/a",
+      topDevice: "n/a",
+      totalConnected: null,
+      totalPasserby: null,
+      vShow: false,
+      dShow: false,
+      nextDayVisitors: "",
+      nextDayConnected: "",
+      nextDayPasserby: "",
+
       dailySalesChart: {
         data: {
           labels: ["M", "T", "W", "T", "F", "S", "S"],
@@ -431,6 +529,25 @@ export default {
       }
     };
   },
+
+  computed: {
+    params: function() {
+      let params = {
+        siteId: this.site,
+        startDate: moment(this.date[0]).format("YYYY-MM-DD"),
+        endDate: moment(this.date[1]).format("YYYY-MM-DD")
+      };
+      if (
+        moment(this.date[0]).format("YYYY-MM-DD") ===
+          moment(this.date[1]).format("YYYY-MM-DD") ||
+        this.interval === "hourly"
+      ) {
+        params.date = moment(this.date[0]).format("YYYY-MM-DD");
+      }
+      return params;
+    }
+  },
+
   methods: {
     complete(index) {
       this.list[index] = !this.list[index];
