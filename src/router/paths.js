@@ -9,6 +9,7 @@ export default [
   },
   {
     path: "/location",
+    name: "Location",
     view: "Location"
   }
 ];

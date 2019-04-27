@@ -55,7 +55,7 @@ export default {
     logo: "./img/vuetifylogo.png",
     links: [
       {
-        url: "/analytics",
+        to: "/analytics",
         icon: "mdi-view-dashboard",
         text: "Analytics"
       },

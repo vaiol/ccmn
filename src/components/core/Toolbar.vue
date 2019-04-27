@@ -49,15 +49,15 @@
             </v-badge>
           </router-link>
           <v-card>
-            <v-list dense>
-              <v-list-tile
-                v-for="notification in notifications"
-                :key="notification"
-                @click="onClick"
-              >
-                <v-list-tile-title v-text="notification" />
-              </v-list-tile>
-            </v-list>
+            <!--<v-list dense>-->
+            <!--<v-list-tile-->
+            <!--v-for="notification in notifications"-->
+            <!--:key="notification"-->
+            <!--@click="onClick"-->
+            <!--&gt;-->
+            <!--<v-list-tile-title v-text="notification" />-->
+            <!--</v-list-tile>-->
+            <!--</v-list>-->
           </v-card>
         </v-menu>
         <router-link v-ripple class="toolbar-items" to="/user-profile">
