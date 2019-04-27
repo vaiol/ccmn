@@ -3,7 +3,7 @@
     <v-layout wrap>
       <v-flex sm6 xs12 md6 lg6>
         <StatsCard
-          color="green"
+          color="primary"
           icon="mdi-store"
           title="Revenue"
           value="$34,245"
@@ -11,7 +11,7 @@
       </v-flex>
       <v-flex sm6 xs12 md6 lg6>
         <StatsCard
-          color="green"
+          color="primary"
           icon="mdi-store"
           title="Revenue"
           value="$34,245"

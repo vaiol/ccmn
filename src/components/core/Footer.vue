@@ -11,7 +11,7 @@
     <span class="font-weight-light copyright">
       &copy;
       {{ new Date().getFullYear() }}
-      <a target="_blank">Sashka & Marishka</a>
+      <a target="_blank"> {{ copyright }} </a>
       <v-icon color="tertiary" size="17">mdi-heart</v-icon>
     </span>
   </v-footer>
@@ -23,7 +23,8 @@ export default {
     links: [
       { name: "Analytics", Link: "/analytics" },
       { name: "Location", Link: "/location" }
-    ]
+    ],
+    copyright: "S&M Production"
   })
 };
 </script>
