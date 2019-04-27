@@ -206,5 +206,46 @@ export default {
   },
   async getDwellDaily(start, end, siteId) {
     return this.getDwellDailyAverage(start, end, siteId);
+  },
+  async getSummary(params) {
+    const url = "/presence/v1/kpisummary/";
+    let res = {};
+    const { data } = await HTTP.get(url, { params });
+    res.totalVisitors = data.totalVisitorCount || 0;
+    res.dwellTime = `${Math.round(data.averageDwell)} mins`;
+    res.conversionRate = `${data.conversionRate}%`;
+    res.topDevice = data.topManufacturers.name;
+    res.totalConnected = data.totalConnectedCount;
+    res.totalPasserby = data.totalPasserbyCount;
+
+    let interval =
+      (new Date(params.startDate) - new Date(params.endDate)) / 86400000;
+    if (interval >= 7 && interval < 30) {
+      res.peakHour = data.peakWeekSummary
+        ? `${data.peakWeekSummary.peakHour}:00-${data.peakWeekSummary.peakHour +
+            1}:00`
+        : "n/a";
+    } else if (interval >= 30) {
+      res.peakHour = data.peakMonthSummary
+        ? `${data.peakMonthSummary.peakHour}:00-${data.peakMonthSummary
+            .peakHour + 1}:00`
+        : "n/a";
+    } else {
+      res.peakHour = data.peakSummary
+        ? `${data.peakSummary.peakHour}:00-${data.peakSummary.peakHour + 1}:00`
+        : "n/a";
+    }
+    return res;
+  },
+  async getConfig() {
+    const response = await HTTP.get("/config/v1/sites");
+    const sites = [];
+    response.data.forEach(el => {
+      sites.push({
+        value: el.aesUId,
+        text: el.name
+      });
+    });
+    return sites;
   }
 };
