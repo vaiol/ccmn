@@ -1,9 +1,5 @@
 <template>
-  <material-card
-    v-bind="$attrs"
-    class="v-card--material-stats"
-    v-on="$listeners"
-  >
+  <Card v-bind="$attrs" class="v-card--material-stats" v-on="$listeners">
     <v-card
       slot="offset"
       :class="`elevation-${elevation}`"
@@ -16,7 +12,7 @@
       </v-icon>
     </v-card>
     <div class="text-xs-right">
-      <p class="category grey--text font-weight-light" v-text="title" />
+      <p class="category grey--text font-weight-light" v-text="title"></p>
       <h3 class="title display-1 font-weight-light">
         {{ value }} <small>{{ smallValue }}</small>
       </h3>
@@ -30,17 +26,19 @@
         :class="subTextColor"
         class="caption font-weight-light"
         v-text="subText"
-      />
+      ></span>
     </template>
-  </material-card>
+  </Card>
 </template>
 
 <script>
-import Card from "./Card";
+import Card from "@/components/material/Card";
 
 export default {
   inheritAttrs: false,
-
+  components: {
+    Card
+  },
   props: {
     ...Card.props,
     icon: {

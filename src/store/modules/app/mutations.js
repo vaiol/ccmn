@@ -1,4 +1,5 @@
-import { set, toggle } from "@/utils/vuex";
+export const set = property => (state, payload) => (state[property] = payload);
+export const toggle = property => state => (state[property] = !state[property]);
 
 export default {
   setDrawer: set("drawer"),

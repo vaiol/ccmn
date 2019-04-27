@@ -1,20 +1,38 @@
 <template>
   <v-app>
-    <core-filter />
-
-    <core-toolbar />
-
-    <core-drawer />
-
-    <core-view />
+    <StyleManager />
+    <Toolbar />
+    <Drawer />
+    <v-content>
+      <div id="core-view">
+        <v-fade-transition mode="out-in">
+          <router-view />
+        </v-fade-transition>
+      </div>
+    </v-content>
+    <Footer />
   </v-app>
 </template>
 
+<script>
+import StyleManager from "@/components/core/Filter";
+import Drawer from "@/components/core/Drawer";
+import Toolbar from "@/components/core/Toolbar";
+import Footer from "@/components/core/Footer";
+
+export default {
+  components: {
+    StyleManager,
+    Drawer,
+    Toolbar,
+    Footer
+  }
+};
+</script>
+
 <style lang="scss">
 @import "@/styles/index.scss";
-
-/* Remove in 1.2 */
-.v-datatable thead th.column.sortable i {
-  vertical-align: unset;
+#core-view {
+  padding-bottom: 100px;
 }
 </style>
