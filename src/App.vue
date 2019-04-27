@@ -1,12 +1,12 @@
 <template>
   <v-app>
-    <v-navigation-drawer
-            fixed
-            v-model="drawer"
-            app
-    >
+    <v-navigation-drawer fixed v-model="drawer" app>
       <v-list dense>
-        <v-list-tile v-for="item in routes" :key="item.url" @click="$router.push(item.url)">
+        <v-list-tile
+          v-for="item in routes"
+          :key="item.url"
+          @click="$router.push(item.url)"
+        >
           <v-list-tile-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>
@@ -19,7 +19,7 @@
 
     <v-toolbar color="indigo" dark fixed app>
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title>Application</v-toolbar-title>
+      <v-toolbar-title>{{ name }}</v-toolbar-title>
     </v-toolbar>
 
     <v-content>
@@ -33,10 +33,10 @@
 </template>
 
 <script>
-
 export default {
-  data () {
+  data() {
     return {
+      name: "CCMN",
       drawer: null,
       routes: [
         {
@@ -45,12 +45,12 @@ export default {
           url: "/analytics"
         },
         {
-          icon: "contact_mail",
+          icon: "map",
           text: "Location",
           url: "/location"
         }
       ]
-    }
+    };
   }
-}
+};
 </script>
