@@ -15,20 +15,8 @@ npm run serve
 npm run build
 ```
 
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Run your unit tests
-```
-npm run test:unit
-```
+### Open browser correctly
+``` open /Applications/Google\ Chrome.app --args --user-data-dir="/var/tmp/Chrome dev session" --disable-web-security --ignore-certificate-errors ```
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).

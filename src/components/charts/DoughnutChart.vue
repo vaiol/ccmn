@@ -5,16 +5,43 @@ const { reactiveProp } = mixins;
 export default {
   extends: Doughnut,
   mixins: [reactiveProp],
-  props: ["data", "text"],
-  mounted() {
-    this.renderChart(this.data, {
-      responsive: true,
-      maintainAspectRatio: false,
-      title: {
-        display: true,
-        text: this.text
+  props: {
+    text: String,
+    xAxes: {
+      type: Boolean,
+      default: false
+    },
+    yAxes: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
+    return {
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        title: {
+          display: true,
+          text: this.text
+        },
+        scales: {
+          xAxes: [
+            {
+              stacked: this.xAxes
+            }
+          ],
+          yAxes: [
+            {
+              stacked: this.yAxes
+            }
+          ]
+        }
       }
-    });
+    };
+  },
+  mounted() {
+    this.renderChart(this.chartData, this.options);
   }
 };
 </script>

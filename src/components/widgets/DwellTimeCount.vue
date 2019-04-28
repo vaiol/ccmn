@@ -1,8 +1,11 @@
 <template>
-  <DoughnutChart :data="chartData" :text="text" />
+  <div v-if="data">
+    <DoughnutChart :chart-data="chartData" :text="text" />
+  </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import DoughnutChart from "@/components/charts/DoughnutChart";
 import api from "@/api/presence";
 import { LABELS, PERIODS, BACKGROUND_COLORS, BORDER_COLORS } from "@/constants";
@@ -11,17 +14,14 @@ export default {
   components: {
     DoughnutChart
   },
-  data: () => ({
-    data: [],
-    text: "Dwell Time Distribution" // TODO change text and file name
-  }),
-  props: ["params"],
-  watch: {
-    async params() {
-      await this.getData();
-    }
+  data() {
+    return {
+      data: null,
+      text: "Dwell Time Distribution" // TODO change text and file name
+    };
   },
   computed: {
+    ...mapGetters("params", ["params"]),
     chartData() {
       return {
         labels: PERIODS.map(period => LABELS[period]),
@@ -37,7 +37,17 @@ export default {
   },
   methods: {
     async getData() {
-      this.data = api.dwellCount(this.params);
+      if (this.params.siteId) {
+        this.data = api.dwellCount(this.params);
+      }
+    }
+  },
+  async mounted() {
+    await this.getData();
+  },
+  watch: {
+    async params() {
+      await this.getData();
     }
   }
 };

@@ -1,5 +1,6 @@
 import axios from "axios";
 import moment from "moment";
+
 import {
   FIVE_TO_EIGHT_HOURS,
   EIGHT_PLUS_HOURS,
@@ -11,12 +12,15 @@ import {
 } from "@/constants";
 
 const HTTP = axios.create({
-  baseURL: "https://cmxlocationsandbox.cisco.com/api",
-  auth: {
-    username: "learning",
-    password: "learning"
+  baseURL: "http://cisco-presence.unit.ua/api",
+  headers: {
+    Accept: "*/*",
+    "Content-Type": "application/json; charset=UTF-8",
+    Authorization:
+      "Basic " + new Buffer("RO" + ":" + "Passw0rd").toString("base64")
   },
-  crossdomain: true
+  crossdomain: true,
+  withCredentials: false
 });
 
 export default {
@@ -140,9 +144,7 @@ export default {
           if (!data[time]) {
             data[time] = [];
           }
-          data[time].push(
-            response.data[key][time] ? response.data[key][time] : 0
-          );
+          data[time].push(response.data[key] ? response.data[key][time] : 0);
         }
       }
     }
@@ -205,18 +207,24 @@ export default {
     return data;
   },
   async getDwellDaily(start, end, siteId) {
-    return this.getDwellDailyAverage(start, end, siteId);
+    return this.getDwellDailyAverage(
+      start,
+      end,
+      siteId,
+      "/presence/v1/dwell/daily"
+    );
   },
   async getSummary(params) {
+    params.date = moment().format("YYYY-MM-DD");
     const url = "/presence/v1/kpisummary/";
     let res = {};
     const { data } = await HTTP.get(url, { params });
-    res.totalVisitors = data.totalVisitorCount || 0;
-    res.dwellTime = `${Math.round(data.averageDwell)} mins`;
-    res.conversionRate = `${data.conversionRate}%`;
+    res.dwellTime = Math.round(data.averageDwell) + "";
+    res.conversionRate = data.conversionRate + "";
     res.topDevice = data.topManufacturers.name;
-    res.totalConnected = data.totalConnectedCount;
-    res.totalPasserby = data.totalPasserbyCount;
+    res.totalConnected = data.totalConnectedCount + "";
+    res.totalPasserby = data.totalPasserbyCount + "";
+    res.totalVisitors = data.totalVisitorCount + "" || 0 + "";
 
     let interval =
       (new Date(params.startDate) - new Date(params.endDate)) / 86400000;

@@ -1,8 +1,11 @@
 <template>
-  <BarChart :data="chartData" :text="text" />
+  <div v-if="data">
+    <BarChart :chart-data="chartData" :text="text" />
+  </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import BarChart from "@/components/charts/BarChart";
 import api from "@/api/presence";
 import { LABELS, PERIODS, BACKGROUND_COLORS, BORDER_COLORS } from "@/constants";
@@ -11,20 +14,16 @@ export default {
   components: {
     BarChart
   },
-  data: () => ({
-    labels: [],
-    data: {},
-    text: "Dwell Time"
-  }),
-  props: ["params", "interval"],
-  watch: {
-    async params() {
-      await this.getData();
-    }
+  data() {
+    return {
+      labels: [],
+      data: null,
+      text: "Dwell Time"
+    };
   },
   computed: {
+    ...mapGetters("params", ["params"]),
     chartData() {
-      // TODO check border and background colors positions
       return {
         labels: this.labels,
         datasets: PERIODS.map(period => ({
@@ -34,13 +33,23 @@ export default {
           data: this.data[period]
         }))
       };
-    },
-    methods: {
-      async getData() {
-        const res = await api.dwell(this.params, this.interval);
-        this.labels = res.labels;
-        this.data = res.data;
+    }
+  },
+  methods: {
+    async getData() {
+      if (this.params.siteId) {
+        const { labels, data } = await api.dwell(this.params, this.interval);
+        this.labels = labels;
+        this.data = data;
       }
+    }
+  },
+  async mounted() {
+    await this.getData();
+  },
+  watch: {
+    async params() {
+      await this.getData();
     }
   }
 };

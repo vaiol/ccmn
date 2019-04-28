@@ -1,8 +1,11 @@
 <template>
-  <BarChart :data="chartData" :text="text" x-axes="true" />
+  <div v-if="data">
+    <BarChart :chart-data="chartData" :text="text" :x-axes="true" />
+  </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import BarChart from "@/components/charts/BarChart";
 import api from "@/api/presence";
 import {
@@ -17,18 +20,15 @@ export default {
   components: {
     BarChart
   },
-  data: () => ({
-    labels: WEEK_DAYS,
-    data: {},
-    text: "Daily Correlation Visitor Dwell Time by Dwell Level"
-  }),
-  props: ["params"],
-  watch: {
-    async params() {
-      await this.getData();
-    }
+  data() {
+    return {
+      labels: WEEK_DAYS,
+      data: null,
+      text: "Visitors Daily Average Time"
+    };
   },
   computed: {
+    ...mapGetters("params", ["params"]),
     chartData() {
       return {
         labels: this.labels,
@@ -39,15 +39,25 @@ export default {
           data: this.data[period]
         }))
       };
-    },
-    methods: {
-      async getData() {
+    }
+  },
+  methods: {
+    async getData() {
+      if (this.params.siteId) {
         this.data = await api.getDwellDailyAverage(
           null,
           null,
           this.params.siteId
         );
       }
+    }
+  },
+  async mounted() {
+    await this.getData();
+  },
+  watch: {
+    async params() {
+      await this.getData();
     }
   }
 };

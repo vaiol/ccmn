@@ -6,7 +6,6 @@ export default {
   extends: Bar,
   mixins: [reactiveProp],
   props: {
-    data: Object,
     text: String,
     xAxes: {
       type: Boolean,
@@ -17,27 +16,32 @@ export default {
       default: false
     }
   },
-  mounted() {
-    this.renderChart(this.data, {
-      responsive: true,
-      maintainAspectRatio: false,
-      title: {
-        display: true,
-        text: this.text
-      },
-      scales: {
-        xAxes: [
-          {
-            stacked: this.xAxes
-          }
-        ],
-        yAxes: [
-          {
-            stacked: this.yAxes
-          }
-        ]
+  data() {
+    return {
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        title: {
+          display: true,
+          text: this.text
+        },
+        scales: {
+          xAxes: [
+            {
+              stacked: this.xAxes
+            }
+          ],
+          yAxes: [
+            {
+              stacked: this.yAxes
+            }
+          ]
+        }
       }
-    });
+    };
+  },
+  mounted() {
+    this.renderChart(this.chartData, this.options);
   }
 };
 </script>
