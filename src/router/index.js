@@ -11,12 +11,12 @@ export default new Router({
     {
       path: "/location",
       name: "Location",
-      component: () => import("./views/Location.vue")
+      component: () => import("@/views/Location.vue")
     },
     {
       path: "/analytics",
       name: "Analytics",
-      component: () => import("./views/Analytics.vue")
+      component: () => import("@/views/Analytics.vue")
     }
   ]
 });
