@@ -69,9 +69,6 @@ export default {
       set(val) {
         this.setDrawer(val);
       }
-    },
-    items() {
-      return this.$t("Layout.View.items");
     }
   },
   mounted() {
@@ -82,7 +79,7 @@ export default {
     window.removeEventListener("resize", this.onResponsiveInverted);
   },
   methods: {
-    ...mapMutations("app", ["setDrawer", "toggleDrawer"]),
+    ...mapMutations("app", ["setDrawer"]),
     onResponsiveInverted() {
       if (window.innerWidth < 991) {
         this.responsive = true;

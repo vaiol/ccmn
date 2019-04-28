@@ -62,7 +62,6 @@
 </template>
 
 <script>
-// Utilities
 import { mapMutations, mapState } from "vuex";
 
 export default {
@@ -77,17 +76,11 @@ export default {
   }),
 
   computed: {
-    ...mapState("app", ["image", "color"]),
-    color() {
-      return this.$store.state.app.color;
-    }
+    ...mapState("app", ["image", "color"])
   },
 
   methods: {
-    ...mapMutations("app", ["setImage"]),
-    setColor(color) {
-      this.$store.state.app.color = color;
-    }
+    ...mapMutations("app", ["setImage", "setColor"])
   }
 };
 </script>

@@ -1,57 +1,22 @@
-/**
- * Vue Router
- *
- * @library
- *
- * https://router.vuejs.org/en/
- */
-
-// Lib imports
 import Vue from "vue";
-import VueAnalytics from "vue-analytics";
 import Router from "vue-router";
-import Meta from "vue-meta";
-
-// Routes
-import paths from "./paths";
-
-function route(path, view, name) {
-  return {
-    name: name || view,
-    path,
-    component: resovle => import(`@/views/${view}.vue`).then(resovle)
-  };
-}
 
 Vue.use(Router);
 
-// Create a new router
-const router = new Router({
+export default new Router({
   mode: "hash",
-  routes: paths
-    .map(path => route(path.path, path.view, path.name))
-    .concat([{ path: "*", redirect: "/analytics" }]),
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
+  base: process.env.BASE_URL,
+  routes: [
+    { path: "/", redirect: "/analytics" },
+    {
+      path: "/location",
+      name: "Location",
+      component: () => import("@/views/Location.vue")
+    },
+    {
+      path: "/analytics",
+      name: "Analytics",
+      component: () => import("@/views/Analytics.vue")
     }
-    if (to.hash) {
-      return { selector: to.hash };
-    }
-    return { x: 0, y: 0 };
-  }
+  ]
 });
-
-Vue.use(Meta);
-
-if (process.env.GOOGLE_ANALYTICS) {
-  Vue.use(VueAnalytics, {
-    id: process.env.GOOGLE_ANALYTICS,
-    router,
-    autoTracking: {
-      page: process.env.NODE_ENV !== "development"
-    }
-  });
-}
-
-export default router;
