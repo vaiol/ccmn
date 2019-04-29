@@ -21,7 +21,7 @@
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex sm6 xs12 md6 lg6 v-if="summary">
+      <v-flex sm6 xs12 md6 lg4 v-if="summary">
         <StatsCard
           color="primary"
           icon="mdi-account-multiple"
@@ -29,7 +29,7 @@
           :value="summary.totalVisitors"
         />
       </v-flex>
-      <v-flex sm6 xs12 md6 lg6 v-if="summary">
+      <v-flex sm6 xs12 md6 lg4 v-if="summary">
         <StatsCard
           color="blue"
           icon="mdi-av-timer"
@@ -60,6 +60,14 @@
           color="dark"
           icon="mdi-monitor-cellphone-star"
           title="Top Device"
+          :value="summary.topDevice"
+        />
+      </v-flex>
+      <v-flex sm6 xs12 md6 lg4 v-if="summary">
+        <StatsCard
+          color="purple"
+          icon="mdi-feature-search"
+          title="Predictions"
           :value="summary.topDevice"
         />
       </v-flex>
