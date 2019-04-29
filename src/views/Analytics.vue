@@ -63,12 +63,28 @@
           :value="summary.topDevice"
         />
       </v-flex>
-      <v-flex sm6 xs12 md6 lg4 v-if="summary">
+      <v-flex sm6 xs12 md6 lg4 v-if="forecasts">
         <StatsCard
           color="purple"
           icon="mdi-feature-search"
-          title="Predictions"
-          :value="summary.topDevice"
+          title="Tomorrow visits"
+          :value="forecasts.nextDayVisitors"
+        />
+      </v-flex>
+      <v-flex sm6 xs12 md6 lg4 v-if="forecasts">
+        <StatsCard
+          color="purple"
+          icon="mdi-feature-search"
+          title="Tomorrow connected"
+          :value="forecasts.nextDayConnected"
+        />
+      </v-flex>
+      <v-flex sm6 xs12 md6 lg4 v-if="forecasts">
+        <StatsCard
+          color="purple"
+          icon="mdi-feature-search"
+          title="Tomorrow passerby"
+          :value="forecasts.nextDayPasserby"
         />
       </v-flex>
       <v-flex xs12 md8>
@@ -136,6 +152,7 @@ export default {
       sites: [],
       site: null,
       summary: null,
+      forecasts: null,
       date: [new Date(), new Date()],
       shortcuts: [
         {
@@ -204,6 +221,7 @@ export default {
       new Date(this.params.startDate),
       new Date(this.params.endDate)
     ];
+    this.forecasts = await api.getForecastData(this.params);
   },
   computed: {
     ...mapGetters("params", ["params"])

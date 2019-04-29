@@ -1,6 +1,7 @@
 import axios from "axios";
 import moment from "moment";
 import Vue from "vue";
+import ESS from "exponential-smoothing-stream";
 
 import {
   FIVE_TO_EIGHT_HOURS,
@@ -46,6 +47,23 @@ HTTP.interceptors.response.use(
     return error.response;
   }
 );
+
+const forecast = obj => {
+  let data = Object.keys(obj).map(key => obj[key]);
+  let a = new ESS({
+    smoothingFactor: 2 / (data.length + 1),
+    initialStrategy: new ESS.strategies.InitialStrategyMedian(data.length)
+  });
+  let res = [];
+  a.on("data", data => {
+    res.push(data);
+  });
+  data.forEach(el => {
+    a.write(parseInt(el));
+  });
+  a.end();
+  return Math.round(res[res.length - 1]);
+};
 
 export default {
   async connectedDaily(start, end, siteId) {
@@ -278,5 +296,24 @@ export default {
       });
     });
     return sites;
+  },
+  async getForecastData(params) {
+    const d1 = await HTTP.get("/presence/v1/visitor/daily/lastweek", {
+      params: { siteId: params.siteId }
+    });
+    const nextDayVisitors = forecast(d1.data) + "";
+    const d2 = await HTTP.get("/presence/v1/connected/daily/lastweek", {
+      params: { siteId: params.siteId }
+    });
+    const nextDayConnected = forecast(d2.data) + "";
+    const d3 = await HTTP.get("/presence/v1/passerby/daily/lastweek", {
+      params: { siteId: params.siteId }
+    });
+    const nextDayPasserby = forecast(d3.data) + "";
+    return {
+      nextDayVisitors,
+      nextDayConnected,
+      nextDayPasserby
+    };
   }
 };

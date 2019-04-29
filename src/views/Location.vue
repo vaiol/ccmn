@@ -170,6 +170,9 @@ export default {
   },
   async mounted() {
     this.getMaps();
+    this.interval = setInterval(() => {
+      this.getUsers();
+    }, 5000);
   }
 };
 </script>
