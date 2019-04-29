@@ -10,6 +10,7 @@
             At floor: {{ users.length }}
           </div>
         </div>
+        <v-select :items="maps" v-model="floors" label="Map"></v-select>
         <v-text-field
           append-icon="mic"
           class="mx-3"
@@ -18,23 +19,31 @@
           prepend-inner-icon="search"
           solo-inverted
         ></v-text-field>
-
-        <template v-slot:extension v-if="map.floors">
+        <!--        <div-->
+        <!--          v-for="endPoint in accessPoints"-->
+        <!--          class="endpoint"-->
+        <!--          :style="-->
+        <!--            setStyles(-->
+        <!--              relativeX(endPoint.mapCoordinates.x),-->
+        <!--              relativeY(endPoint.mapCoordinates.y),-->
+        <!--              -1-->
+        <!--            )-->
+        <!--          "-->
+        <!--        ></div>-->
+        <template v-slot:extension v-if="floors">
           <v-tabs
-            v-model="tabs"
+            v-model="tab"
             centered
             color="transparent"
             slider-color="white"
           >
-            <v-tab v-for="n in map.floors.length" :key="n">
-              Floor {{ n }}
-            </v-tab>
+            <v-tab v-for="n in floors.length" :key="n"> Floor {{ n }} </v-tab>
           </v-tabs>
         </template>
       </v-toolbar>
 
-      <v-tabs-items v-model="tabs">
-        <v-tab-item v-for="floor in map.floors" :key="floor.floorNumber">
+      <v-tabs-items v-model="tab">
+        <v-tab-item v-for="floor in floors" :key="floor.floorNumber">
           <v-card>
             <v-card-text>
               <v-img :src="floor.image.src" class="grey darken-4"></v-img>
@@ -83,9 +92,10 @@ export default {
   name: "location",
   data() {
     return {
-      tabs: null,
+      tab: null,
       users: [],
-      map: [],
+      floors: null,
+      maps: [],
       imageURL: null,
 
       sheet: false,
@@ -110,15 +120,53 @@ export default {
       macAddress: "00:2b:01:00:03:00"
     };
   },
-  computed: {},
+  computed: {
+    accessPoints() {
+      return this.currentFloor.info.accessPoints;
+    }
+  },
   methods: {
     async getMaps() {
-      this.map = await api.getAllMaps();
-      console.log(this.map);
+      this.maps = await api.getAllMaps();
+      this.floors = this.maps[0].value;
     },
     async getUsers() {
       this.users = await api.getUsers();
     }
+    // setStyles(x, y, index) {
+    //   let styles = {};
+    //   if (index === this.chosenIndex) {
+    //     styles = {
+    //       left: x + "%",
+    //       top: y + "%",
+    //       backgroundColor: "red",
+    //       boxShadow:
+    //         "0 0 10px rgba(0,0,0,0.7), 0 0 20px rgba(0,0,0,0.7), 0 0 30px rgba(0,0,0,0.7)",
+    //       opacity: 1,
+    //       zIndex: 100
+    //     };
+    //   } else {
+    //     styles = {
+    //       left: x + "%",
+    //       top: y + "%"
+    //     };
+    //   }
+    //   return styles;
+    // },
+    // relativeX: function(x) {
+    //   let relative =
+    //     (this.mapWidth * x) /
+    //     this.currentFloor.info.dimension.width /
+    //     this.mapWidth;
+    //   return relative * 100;
+    // },
+    // relativeY: function(y) {
+    //   let relative =
+    //     (this.mapHeight * y) /
+    //     this.currentFloor.info.dimension.length /
+    //     this.mapHeight;
+    //   return relative * 100;
+    // }
   },
   async mounted() {
     this.getMaps();

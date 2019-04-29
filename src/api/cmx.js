@@ -35,8 +35,8 @@ export default {
           }
           floors.sort((a, b) => a.floorNumber - b.floorNumber);
           maps.push({
-            floors,
-            name: building.hierarchyName
+            value: floors,
+            text: building.hierarchyName
           });
         }
       }
