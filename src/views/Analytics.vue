@@ -222,14 +222,14 @@ export default {
     this.sites = await api.getConfig();
     if (this.sites.length) {
       this.loading = false;
+      this.setSite(this.sites[0].value);
+      this.site = this.sites[0].value;
+      await this.getData();
+      this.date = [
+        new Date(this.params.startDate),
+        new Date(this.params.endDate)
+      ];
     }
-    this.setSite(this.sites[0].value);
-    this.site = this.sites[0].value;
-    await this.getData();
-    this.date = [
-      new Date(this.params.startDate),
-      new Date(this.params.endDate)
-    ];
   },
   computed: {
     ...mapGetters("params", ["params"])

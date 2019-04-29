@@ -147,8 +147,8 @@ export default {
       this.maps = await api.getAllMaps();
       if (this.maps.length) {
         this.loading = false;
+        this.floors = this.maps[0].value;
       }
-      this.floors = this.maps[0].value;
     },
     async getUsers() {
       this.users = await api.getUsers();
