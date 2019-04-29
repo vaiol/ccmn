@@ -4,10 +4,10 @@
       <v-toolbar tabs class="toolbar">
         <div class="w-60">
           <div class="font-weight-bold text-gray font-size">
-            Total users: {{ users }}
+            Total users: {{ users.length }}
           </div>
           <div class="font-weight-bold text-gray font-size">
-            At floor: {{ flor }}
+            At floor: {{ users.length }}
           </div>
         </div>
         <v-text-field
@@ -19,26 +19,25 @@
           solo-inverted
         ></v-text-field>
 
-        <template v-slot:extension>
+        <template v-slot:extension v-if="map.floors">
           <v-tabs
             v-model="tabs"
             centered
             color="transparent"
             slider-color="white"
           >
-            <v-tab v-for="n in 2" :key="n"> Floor {{ n }} </v-tab>
+            <v-tab v-for="n in map.floors.length" :key="n">
+              Floor {{ n }}
+            </v-tab>
           </v-tabs>
         </template>
       </v-toolbar>
 
       <v-tabs-items v-model="tabs">
-        <v-tab-item v-for="n in 2" :key="n">
+        <v-tab-item v-for="floor in map.floors" :key="floor.floorNumber">
           <v-card>
             <v-card-text>
-              <v-img
-                src="https://picsum.photos/350/165?random"
-                class="grey darken-4"
-              ></v-img>
+              <v-img :src="floor.image.src" class="grey darken-4"></v-img>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -78,12 +77,17 @@
 </template>
 
 <script>
+import api from "@/api/cmx";
+
 export default {
+  name: "location",
   data() {
     return {
       tabs: null,
-      flor: 2,
-      users: 22,
+      users: [],
+      map: [],
+      imageURL: null,
+
       sheet: false,
       tiles: [
         { title: "MAC Address:", value: "00:2b:01:00:03:00" },
@@ -105,6 +109,19 @@ export default {
 
       macAddress: "00:2b:01:00:03:00"
     };
+  },
+  computed: {},
+  methods: {
+    async getMaps() {
+      this.map = await api.getAllMaps();
+      console.log(this.map);
+    },
+    async getUsers() {
+      this.users = await api.getUsers();
+    }
+  },
+  async mounted() {
+    this.getMaps();
   }
 };
 </script>
