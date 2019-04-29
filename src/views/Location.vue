@@ -48,7 +48,7 @@
                 <v-img id="imgMap" :src="floor.image.src" class="grey darken-4">
                   <div
                     v-for="(user, index) in currentFloorUsers"
-                    :key="user"
+                    :key="user.id"
                     class="pin-associated"
                     :style="setStyles(user.styles.x, user.styles.y, index)"
                     @click="chooseUser(user)"
@@ -56,7 +56,7 @@
                   <div v-if="currentFloor">
                     <div
                       v-for="endPoint in accessPoints"
-                      :key="endPoint"
+                      :key="endPoint.id"
                       class="endpoint"
                       :style="
                         setStyles(
