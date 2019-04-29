@@ -12,46 +12,39 @@ const HTTP = axios.create({
   withCredentials: false
 });
 
+const getFloorImage = async image => {
+  const url = "/config/v1/maps/imagesource/";
+  const response = await HTTP.get(url + image, {
+    responseType: "arraybuffer"
+  });
+  let imageType = response.headers["content-type"];
+  let base64 = new Buffer(response.data).toString("base64");
+  return "data:" + imageType + ";base64," + base64;
+};
+
 export default {
-  async getMaps() {
-    const url = "/config/v1/maps";
-    const response = await HTTP.get(url);
-    const campuses = response.data.campuses;
-    const maps = {};
-    for (let i = 0; i < campuses.length; i++) {
-      if (campuses[i].buildingList.length > 0) {
-        maps.push({
-          floors: campuses.buildingList[i].floorList,
-          name: campuses.buildingList[i].hierarchyName
-        });
-        i++;
+  async getAllMaps() {
+    const maps = [];
+    const response = await HTTP.get("/config/v1/maps");
+    for (const campus of response.data.campuses) {
+      if (campus.buildingList.length) {
+        for (const building of campus.buildingList) {
+          const floors = building.floorList;
+          for (const f of floors) {
+            f.image.src = await getFloorImage(f.image.imageName);
+          }
+          floors.sort((a, b) => a.floorNumber - b.floorNumber);
+          maps.push({
+            floors,
+            name: building.hierarchyName
+          });
+        }
       }
-    }
-    for (let i = 0; i < maps[0].floors.length; i++) {
-      maps[0].floors[i].image = await this.getFloorImage(maps[0].floors[i]);
     }
     return maps;
   },
-
-  async getFloorImage(floor) {
-    const url = "/config/v1/maps/imagesource/";
-    const response = await HTTP.get(url + floor.image.imageName, {
-      responseType: "arraybuffer"
-    });
-    const floorImg = {};
-    let imageType = response.headers["content-type"];
-    let base64 = new Buffer(response.data).toString("base64");
-    let dataURI = "data:" + imageType + ";base64," + base64;
-    floorImg.push({
-      imageData: dataURI,
-      info: floor
-    });
-    // res.floors.sort((a, b) => {
-    //   return a.info.floorNumber - b.info.floorNumber;
-    // });
-    // if (res.floors.length === floorsLength) {
-    // self.showMap(res.floors[0]);
-    // }
-    return floorImg;
+  async getUsers() {
+    const { data } = await HTTP.get("/location/v2/clients");
+    return data;
   }
 };
