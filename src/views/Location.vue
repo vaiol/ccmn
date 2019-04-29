@@ -4,10 +4,10 @@
       <v-toolbar tabs class="toolbar">
         <div class="w-60">
           <div class="font-weight-bold text-gray font-size">
-            Total users: {{ users }}
+            Total users: {{ users.length }}
           </div>
           <div class="font-weight-bold text-gray font-size">
-            At floor: {{ flor }}
+            At floor: {{ currentFloorUsers.length }}
           </div>
         </div>
         <v-text-field
@@ -35,10 +35,7 @@
         <v-tab-item v-for="n in 2" :key="n">
           <v-card>
             <v-card-text>
-              <v-img
-                src="https://picsum.photos/350/165?random"
-                class="grey darken-4"
-              ></v-img>
+              <v-img :src="showMap(n)" class="grey darken-4"></v-img>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -78,12 +75,17 @@
 </template>
 
 <script>
+import api from "@/api/cmx";
+
 export default {
+  name: "location",
   data() {
     return {
       tabs: null,
-      flor: 2,
-      users: 22,
+      users: [],
+      maps: [],
+      imageURL: null,
+
       sheet: false,
       tiles: [
         { title: "MAC Address:", value: "00:2b:01:00:03:00" },
@@ -105,6 +107,30 @@ export default {
 
       macAddress: "00:2b:01:00:03:00"
     };
+  },
+  computed: {
+    currentFloorUsers() {
+      let result = [];
+      // this.users.forEach(el => {
+      //   if (el.mapInfo.floorRefId === this.currentFloor.info.aesUidString) {
+      //     el.styles = {};
+      //     el.styles.x = this.relativeX(el.mapCoordinate.x);
+      //     el.styles.y = this.relativeY(el.mapCoordinate.y);
+      //     result.push(el);
+      //   }
+      // });
+      return result;
+    }
+  },
+  methods: {
+    async getMaps() {
+      this.maps = await api.getMaps();
+    },
+
+    showMap(floor) {
+      let src = floor;
+      return src;
+    }
   }
 };
 </script>
