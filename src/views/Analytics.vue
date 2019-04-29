@@ -9,7 +9,6 @@
           <v-flex xs4></v-flex>
           <v-flex xs4>
             <date-picker
-              :input-class="'form-control'"
               :first-day-of-week="1"
               :not-after="new Date()"
               v-model="date"
@@ -17,22 +16,23 @@
               range
               :shortcuts="shortcuts"
               width="300"
+              class="datepicker pt-3 right"
             ></date-picker>
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex sm6 xs12 md6 lg6 v-if="summary">
+      <v-flex sm6 xs12 md6 lg4 v-if="summary">
         <StatsCard
           color="primary"
-          icon="mdi-store"
+          icon="mdi-account-multiple"
           title="Total visitors"
           :value="summary.totalVisitors"
         />
       </v-flex>
-      <v-flex sm6 xs12 md6 lg6 v-if="summary">
+      <v-flex sm6 xs12 md6 lg4 v-if="summary">
         <StatsCard
-          color="primary"
-          icon="mdi-store"
+          color="blue"
+          icon="mdi-av-timer"
           title="Average Dwell Time"
           :value="summary.dwellTime"
           small-value="mins"
@@ -40,8 +40,8 @@
       </v-flex>
       <v-flex sm6 xs12 md6 lg4 v-if="summary">
         <StatsCard
-          color="orange"
-          icon="mdi-content-copy"
+          color="red"
+          icon="mdi-store-24-hour"
           title="Peak Hour"
           :value="summary.peakHour"
         />
@@ -49,7 +49,7 @@
       <v-flex sm6 xs12 md6 lg4 v-if="summary">
         <StatsCard
           color="orange"
-          icon="mdi-content-copy"
+          icon="mdi-star"
           title="Conversion Rate"
           :value="summary.conversionRate"
           small-value="%"
@@ -57,9 +57,17 @@
       </v-flex>
       <v-flex sm6 xs12 md6 lg4 v-if="summary">
         <StatsCard
-          color="orange"
-          icon="mdi-content-copy"
+          color="dark"
+          icon="mdi-monitor-cellphone-star"
           title="Top Device"
+          :value="summary.topDevice"
+        />
+      </v-flex>
+      <v-flex sm6 xs12 md6 lg4 v-if="summary">
+        <StatsCard
+          color="purple"
+          icon="mdi-feature-search"
+          title="Predictions"
           :value="summary.topDevice"
         />
       </v-flex>
@@ -224,5 +232,8 @@ export default {
 <style>
 input {
   width: 100% !important;
+}
+date-picker .datepicker .mx-datepicker {
+  border: gray 1px;
 }
 </style>
