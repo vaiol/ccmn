@@ -9,7 +9,6 @@
           <v-flex xs4></v-flex>
           <v-flex xs4>
             <date-picker
-              :input-class="'form-control'"
               :first-day-of-week="1"
               :not-after="new Date()"
               v-model="date"
@@ -17,6 +16,7 @@
               range
               :shortcuts="shortcuts"
               width="300"
+              class="datepicker pt-3 right"
             ></date-picker>
           </v-flex>
         </v-layout>
@@ -224,5 +224,8 @@ export default {
 <style>
 input {
   width: 100% !important;
+}
+date-picker .datepicker .mx-datepicker {
+  border: gray 1px;
 }
 </style>
