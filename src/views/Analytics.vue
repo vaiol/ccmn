@@ -41,15 +41,15 @@
               </v-flex>
             </v-layout>
           </v-flex>
-          <v-flex sm6 xs12 md6 lg4 v-if="summary">
+          <v-flex sm6 xs12 md6 lg3 v-if="summary">
             <StatsCard
               color="primary"
-              icon="mdi-account-multiple"
+              icon="mdi-account-group"
               title="Total visitors"
               :value="summary.totalVisitors"
             />
           </v-flex>
-          <v-flex sm6 xs12 md6 lg4 v-if="summary">
+          <v-flex sm6 xs12 md6 lg3 v-if="summary">
             <StatsCard
               color="blue"
               icon="mdi-av-timer"
@@ -58,7 +58,7 @@
               small-value="mins"
             />
           </v-flex>
-          <v-flex sm6 xs12 md6 lg4 v-if="summary">
+          <v-flex sm6 xs12 md6 lg3 v-if="summary">
             <StatsCard
               color="red"
               icon="mdi-store-24-hour"
@@ -66,7 +66,7 @@
               :value="summary.peakHour"
             />
           </v-flex>
-          <v-flex sm6 xs12 md6 lg4 v-if="summary">
+          <v-flex sm6 xs12 md6 lg3 v-if="summary">
             <StatsCard
               color="orange"
               icon="mdi-star"
@@ -75,7 +75,7 @@
               small-value="%"
             />
           </v-flex>
-          <v-flex sm6 xs12 md6 lg4 v-if="summary">
+          <v-flex sm6 xs12 md6 lg3 v-if="summary">
             <StatsCard
               color="dark"
               icon="mdi-monitor-cellphone-star"
@@ -83,26 +83,26 @@
               :value="summary.topDevice"
             />
           </v-flex>
-          <v-flex sm6 xs12 md6 lg4 v-if="forecasts">
+          <v-flex sm6 xs12 md6 lg3 v-if="forecasts">
             <StatsCard
               color="purple"
-              icon="mdi-feature-search"
-              title="Tomorrow visits"
+              icon="mdi-account-multiple-plus"
+              title="Tomorrow visitor"
               :value="forecasts.nextDayVisitors"
             />
           </v-flex>
-          <v-flex sm6 xs12 md6 lg4 v-if="forecasts">
+          <v-flex sm6 xs12 md6 lg3 v-if="forecasts">
             <StatsCard
-              color="purple"
-              icon="mdi-feature-search"
+              color="pink"
+              icon="mdi-lan-connect"
               title="Tomorrow connected"
               :value="forecasts.nextDayConnected"
             />
           </v-flex>
-          <v-flex sm6 xs12 md6 lg4 v-if="forecasts">
+          <v-flex sm6 xs12 md6 lg3 v-if="forecasts">
             <StatsCard
-              color="purple"
-              icon="mdi-feature-search"
+              color="teal"
+              icon="mdi-access-point"
               title="Tomorrow passerby"
               :value="forecasts.nextDayPasserby"
             />
