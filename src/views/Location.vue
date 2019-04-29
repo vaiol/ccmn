@@ -28,6 +28,7 @@
             label="Search by MAC"
             prepend-inner-icon="search"
             solo-inverted
+            v-model="search"
           ></v-text-field>
           <template v-slot:extension v-if="floors">
             <v-tabs
@@ -74,6 +75,13 @@
         </v-tabs-items>
         <h4 class="pl-3 text-gray">Choose user to get more information</h4>
       </div>
+      <v-list>
+        <v-list-tile v-for="item in currentFloorUsers" :key="item.title" avatar>
+          <v-list-tile-content>
+            <v-list-tile-title v-text="item.macAddress"></v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
 
       <div class="text-xs-center">
         <v-bottom-sheet v-model="sheet">
@@ -114,6 +122,7 @@ export default {
   name: "location",
   data() {
     return {
+      interval: null,
       mapWidth: 0,
       mapHeight: 0,
       tab: null,
@@ -122,7 +131,7 @@ export default {
       floors: null,
       maps: [],
       imageURL: null,
-
+      search: "",
       sheet: false,
       tiles: [
         { title: "MAC Address:", value: "00:2b:01:00:03:00" },
@@ -157,16 +166,17 @@ export default {
       return this.floors[this.tab];
     },
     currentFloorUsers() {
-      let result = [];
-      this.users.forEach(el => {
-        if (el.mapInfo.floorRefId === this.currentFloor.aesUidString) {
-          el.styles = {};
-          el.styles.x = this.relativeX(el.mapCoordinate.x);
-          el.styles.y = this.relativeY(el.mapCoordinate.y);
-          result.push(el);
-        }
-      });
-      return result;
+      // let result = [];
+      // let users = this.users;
+      return this.users
+        .filter(u => u.macAddress.includes(this.search))
+        .filter(u => u.mapInfo.floorRefId === this.currentFloor.aesUidString)
+        .map(u => {
+          u.styles = {};
+          u.styles.x = this.relativeX(u.mapCoordinate.x);
+          u.styles.y = this.relativeY(u.mapCoordinate.y);
+          return u;
+        });
     },
     loading() {
       return !this.maps.length || !this.users.length;
@@ -179,8 +189,27 @@ export default {
         this.floors = this.maps[0].value;
       }
     },
-    async getUsers() {
-      this.users = await api.getUsers();
+    async getUsers(first) {
+      const users = await api.getUsers();
+      for (const nUser of users) {
+        let newUser = true;
+        for (const oUser of this.users) {
+          if (oUser.macAddress === nUser.macAddress) {
+            newUser = false;
+          }
+        }
+        if (newUser && !first) {
+          this.$notify({
+            group: "http",
+            type: "info",
+            title: "New User!",
+            text: `"Hi, mac: 00:00:2a:01:00:06 now is on the ${
+              nUser.mapInfo.mapHierarchyString
+            }"`
+          });
+        }
+      }
+      this.users = users;
     },
     relativeX: function(x) {
       let map = document.getElementById("imgMap");
@@ -228,9 +257,13 @@ export default {
   },
   async mounted() {
     await this.getMaps();
+    await this.getUsers(true);
     this.interval = setInterval(() => {
       this.getUsers();
-    }, 2000);
+    }, 6000);
+  },
+  destroyed() {
+    clearInterval(this.interval);
   }
 };
 </script>
@@ -265,25 +298,6 @@ export default {
   border-radius: 50%;
 }
 
-.pin-unassociated {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #fe631f;
-  opacity: 0.8;
-  position: absolute;
-}
-
-.pin-unassociated:after {
-  content: "";
-  width: 10px;
-  height: 10px;
-  margin: 4px 0 0 4px;
-  background: #2f2f2f;
-  position: absolute;
-  opacity: 0.8;
-  border-radius: 50%;
-}
 .endpoint {
   width: 18px;
   height: 18px;
