@@ -56,7 +56,7 @@
                   <div
                     v-for="(user, index) in currentFloorUsers"
                     :key="user.id"
-                    class="pin-associated"
+                    class="user-pin"
                     :style="setStyles(user.styles.x, user.styles.y, index)"
                     @click="chooseUser(user)"
                   ></div>
@@ -64,7 +64,7 @@
                     <div
                       v-for="endPoint in accessPoints"
                       :key="endPoint.id"
-                      class="endpoint"
+                      class="access-pin"
                       :style="
                         setStyles(
                           relativeX(endPoint.mapCoordinates.x),
@@ -134,23 +134,6 @@ export default {
       imageURL: null,
       search: "",
       sheet: false,
-      tiles: [
-        { title: "MAC Address:", value: "00:2b:01:00:03:00" },
-        { title: "Status:", value: "Inactive" },
-        {
-          title: "Client Information:",
-          value: "0 connected clients, 0 detected clients"
-        },
-        { title: "Co-ordinates:", value: "X: 29.592525, Y: 22.204147" },
-        { title: "Name:", value: "T1-2" },
-        { title: "Height:", value: "10" },
-        { title: "Angles::", value: "Slot 0: 90, Slot 1: 90" },
-        { title: "Elevation Angles:", value: "Slot 0: 0, Slot 1: 0" },
-        {
-          title: "Antenna Pattern:",
-          value: "Slot 0: Internal-1140-2.4GHz, Slot 1: Internal-1140-5.0GHz"
-        }
-      ],
 
       macAddress: "00:2b:01:00:03:00"
     };
@@ -181,6 +164,23 @@ export default {
     },
     loading() {
       return !this.maps.length || !this.users.length;
+    },
+    tiles() {
+      if (!this.user) {
+        return [];
+      }
+      return [
+        { title: "MAC Address:", value: this.user.macAddress },
+        { title: "Manufacturer:", value: this.user.manufacturer },
+        {
+          title: "IP Address:",
+          value: this.user.ipAddress ? this.user.ipAddress[0] : ""
+        },
+        { title: "Username:", value: this.user.userName },
+        { title: "ssId:", value: this.user.ssId },
+        { title: "Network Status:", value: this.user.networkStatus },
+        { title: "Status:", value: this.user.dot11Status }
+      ];
     }
   },
   methods: {
@@ -230,36 +230,18 @@ export default {
       let relative = (mapH * y) / this.currentFloor.dimension.length / mapH;
       return relative * 100;
     },
-    setStyles(x, y, index) {
+    setStyles(x, y) {
       let styles = {};
-      if (index === 4) {
-        styles = {
-          left: x + "%",
-          top: y + "%",
-          backgroundColor: "red",
-          boxShadow:
-            "0 0 10px rgba(0,0,0,0.7), 0 0 20px rgba(0,0,0,0.7), 0 0 30px rgba(0,0,0,0.7)",
-          opacity: 1,
-          zIndex: 100
-        };
-      } else {
-        styles = {
-          left: x + "%",
-          top: y + "%"
-        };
-      }
+      styles = {
+        left: x + "%",
+        top: y + "%"
+      };
       return styles;
     },
     chooseUser(user) {
       this.user = user;
       this.sheet = true;
-      this.setTileData();
-      console.log(user);
     }
-  },
-
-  setTileData() {
-    this.tiles[0].value = this.user.apMacAddress;
   },
 
   async mounted() {
@@ -285,7 +267,7 @@ export default {
 .w-60 {
   width: 60%;
 }
-.pin-associated {
+.user-pin {
   position: absolute;
   width: 20px;
   height: 20px;
@@ -294,7 +276,7 @@ export default {
   opacity: 0.9;
 }
 
-.pin-associated:after {
+.user-pin:after {
   position: absolute;
   width: 12px;
   height: 12px;
@@ -305,14 +287,14 @@ export default {
   border-radius: 50%;
 }
 
-.endpoint {
+.access-pin {
   position: absolute;
   width: 20px;
   height: 20px;
   background: #7cfc00;
 }
 
-.endpoint:after {
+.access-pin:after {
   position: absolute;
   width: 12px;
   height: 12px;
