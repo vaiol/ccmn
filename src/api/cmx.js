@@ -1,12 +1,12 @@
 import axios from "axios";
 
 const HTTP = axios.create({
-  baseURL: "https://cisco-cmx.unit.ua/api", // http://cisco-presence.unit.ua/api
+  baseURL: "https://cisco-cmx.unit.ua/api",
   headers: {
     Accept: "*/*",
     "Content-Type": "application/json; charset=UTF-8",
     Authorization:
-      "Basic " + new Buffer("RO" + ":" + "just4reading").toString("base64") // "RO" + ":" + "Passw0rd"
+      "Basic " + new Buffer("RO" + ":" + "just4reading").toString("base64")
   },
   crossdomain: true,
   withCredentials: false
