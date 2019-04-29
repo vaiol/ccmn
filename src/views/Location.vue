@@ -1,86 +1,102 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-layout row wrap>
-    <div class="w-100">
-      <v-toolbar tabs class="toolbar">
-        <div class="w-60">
-          <div class="font-weight-bold text-gray font-size">
-            Total users: {{ users.length }}
-          </div>
-          <div class="font-weight-bold text-gray font-size">
-            At floor: {{ users.length }}
-          </div>
-        </div>
-        <v-select :items="maps" v-model="floors" label="Map"></v-select>
-        <v-text-field
-          append-icon="mic"
-          class="mx-3"
-          flat
-          label="Search by MAC"
-          prepend-inner-icon="search"
-          solo-inverted
-        ></v-text-field>
-        <!--        <div-->
-        <!--          v-for="endPoint in accessPoints"-->
-        <!--          class="endpoint"-->
-        <!--          :style="-->
-        <!--            setStyles(-->
-        <!--              relativeX(endPoint.mapCoordinates.x),-->
-        <!--              relativeY(endPoint.mapCoordinates.y),-->
-        <!--              -1-->
-        <!--            )-->
-        <!--          "-->
-        <!--        ></div>-->
-        <template v-slot:extension v-if="floors">
-          <v-tabs
-            v-model="tab"
-            centered
-            color="transparent"
-            slider-color="white"
-          >
-            <v-tab v-for="n in floors.length" :key="n"> Floor {{ n }} </v-tab>
-          </v-tabs>
-        </template>
-      </v-toolbar>
+    <v-layout
+      v-if="loading && !maps.length"
+      align-center
+      justify-center
+      fill-height
+    >
+      <v-progress-circular
+        :size="70"
+        :width="7"
+        color="green"
+        indeterminate
+      ></v-progress-circular>
+    </v-layout>
 
-      <v-tabs-items v-model="tab">
-        <v-tab-item v-for="floor in floors" :key="floor.floorNumber">
-          <v-card>
-            <v-card-text>
-              <v-img :src="floor.image.src" class="grey darken-4"></v-img>
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-      </v-tabs-items>
-      <h4 class="pl-3 text-gray">Choose user to get more information</h4>
-    </div>
-
-    <div class="text-xs-center">
-      <v-bottom-sheet v-model="sheet">
-        <template v-slot:activator>
-          <v-btn color="purple" dark>
-            Click me
-          </v-btn>
-        </template>
-        <v-list>
-          <v-subheader>ACCESS POINT</v-subheader>
-          <v-list-tile
-            v-for="tile in tiles"
-            :key="tile.title"
-            @click="sheet = false"
-            class="d-flex xs4"
-          >
-            <v-list-tile-avatar>
-              <v-avatar size="32px" tile>
-                <img src="../../public/img/check.png" :alt="tile.title" />
-              </v-avatar>
-            </v-list-tile-avatar>
-            <v-list-tile-title
-              ><span class="font-weight-bold">{{ tile.title }}</span>
-              {{ tile.value }}</v-list-tile-title
+    <div v-if="!loading && maps.length" class="w-100">
+      <div>
+        <v-toolbar tabs class="toolbar">
+          <div class="w-60">
+            <div class="font-weight-bold text-gray font-size">
+              Total users: {{ users.length }}
+            </div>
+            <div class="font-weight-bold text-gray font-size">
+              At floor: {{ users.length }}
+            </div>
+          </div>
+          <v-select :items="maps" v-model="floors" label="Map"></v-select>
+          <v-text-field
+            append-icon="mic"
+            class="mx-3"
+            flat
+            label="Search by MAC"
+            prepend-inner-icon="search"
+            solo-inverted
+          ></v-text-field>
+          <!--        <div-->
+          <!--          v-for="endPoint in accessPoints"-->
+          <!--          class="endpoint"-->
+          <!--          :style="-->
+          <!--            setStyles(-->
+          <!--              relativeX(endPoint.mapCoordinates.x),-->
+          <!--              relativeY(endPoint.mapCoordinates.y),-->
+          <!--              -1-->
+          <!--            )-->
+          <!--          "-->
+          <!--        ></div>-->
+          <template v-slot:extension v-if="floors">
+            <v-tabs
+              v-model="tab"
+              centered
+              color="transparent"
+              slider-color="white"
             >
-          </v-list-tile>
-        </v-list>
-      </v-bottom-sheet>
+              <v-tab v-for="n in floors.length" :key="n"> Floor {{ n }} </v-tab>
+            </v-tabs>
+          </template>
+        </v-toolbar>
+
+        <v-tabs-items v-model="tab">
+          <v-tab-item v-for="floor in floors" :key="floor.floorNumber">
+            <v-card>
+              <v-card-text>
+                <v-img :src="floor.image.src" class="grey darken-4"></v-img>
+              </v-card-text>
+            </v-card>
+          </v-tab-item>
+        </v-tabs-items>
+        <h4 class="pl-3 text-gray">Choose user to get more information</h4>
+      </div>
+
+      <div class="text-xs-center">
+        <v-bottom-sheet v-model="sheet">
+          <template v-slot:activator>
+            <v-btn color="purple" dark>
+              Click me
+            </v-btn>
+          </template>
+          <v-list>
+            <v-subheader>ACCESS POINT</v-subheader>
+            <v-list-tile
+              v-for="tile in tiles"
+              :key="tile.title"
+              @click="sheet = false"
+              class="d-flex xs4"
+            >
+              <v-list-tile-avatar>
+                <v-avatar size="32px" tile>
+                  <img src="../../public/img/check.png" :alt="tile.title" />
+                </v-avatar>
+              </v-list-tile-avatar>
+              <v-list-tile-title
+                ><span class="font-weight-bold">{{ tile.title }}</span>
+                {{ tile.value }}</v-list-tile-title
+              >
+            </v-list-tile>
+          </v-list>
+        </v-bottom-sheet>
+      </div>
     </div>
   </v-layout>
 </template>
@@ -97,6 +113,7 @@ export default {
       floors: null,
       maps: [],
       imageURL: null,
+      loading: true,
 
       sheet: false,
       tiles: [
@@ -128,7 +145,10 @@ export default {
   methods: {
     async getMaps() {
       this.maps = await api.getAllMaps();
-      this.floors = this.maps[0].value;
+      if (this.maps.length) {
+        this.loading = false;
+        this.floors = this.maps[0].value;
+      }
     },
     async getUsers() {
       this.users = await api.getUsers();

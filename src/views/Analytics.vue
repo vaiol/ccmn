@@ -1,121 +1,143 @@
 <template>
-  <v-container fill-height fluid grid-list-xl>
-    <v-layout wrap>
-      <v-flex xs12>
-        <v-layout row>
-          <v-flex xs4>
-            <v-select :items="sites" v-model="site" label="Place"></v-select>
+  <v-layout>
+    <v-layout
+      v-if="loading && !sites.length"
+      align-center
+      justify-center
+      fill-height
+    >
+      <v-progress-circular
+        :size="70"
+        :width="7"
+        color="green"
+        indeterminate
+      ></v-progress-circular>
+    </v-layout>
+
+    <v-layout v-if="!loading && sites.length">
+      <v-container fill-height fluid grid-list-xl>
+        <v-layout wrap>
+          <v-flex xs12>
+            <v-layout row>
+              <v-flex xs4>
+                <v-select
+                  :items="sites"
+                  v-model="site"
+                  label="Place"
+                ></v-select>
+              </v-flex>
+              <v-flex xs4></v-flex>
+              <v-flex xs4>
+                <date-picker
+                  :first-day-of-week="1"
+                  :not-after="new Date()"
+                  v-model="date"
+                  :lang="lang"
+                  range
+                  :shortcuts="shortcuts"
+                  width="300"
+                  class="datepicker pt-3 right"
+                ></date-picker>
+              </v-flex>
+            </v-layout>
           </v-flex>
-          <v-flex xs4></v-flex>
-          <v-flex xs4>
-            <date-picker
-              :first-day-of-week="1"
-              :not-after="new Date()"
-              v-model="date"
-              :lang="lang"
-              range
-              :shortcuts="shortcuts"
-              width="300"
-              class="datepicker pt-3 right"
-            ></date-picker>
+          <v-flex sm6 xs12 md6 lg4 v-if="summary">
+            <StatsCard
+              color="primary"
+              icon="mdi-account-multiple"
+              title="Total visitors"
+              :value="summary.totalVisitors"
+            />
+          </v-flex>
+          <v-flex sm6 xs12 md6 lg4 v-if="summary">
+            <StatsCard
+              color="blue"
+              icon="mdi-av-timer"
+              title="Average Dwell Time"
+              :value="summary.dwellTime"
+              small-value="mins"
+            />
+          </v-flex>
+          <v-flex sm6 xs12 md6 lg4 v-if="summary">
+            <StatsCard
+              color="red"
+              icon="mdi-store-24-hour"
+              title="Peak Hour"
+              :value="summary.peakHour"
+            />
+          </v-flex>
+          <v-flex sm6 xs12 md6 lg4 v-if="summary">
+            <StatsCard
+              color="orange"
+              icon="mdi-star"
+              title="Conversion Rate"
+              :value="summary.conversionRate"
+              small-value="%"
+            />
+          </v-flex>
+          <v-flex sm6 xs12 md6 lg4 v-if="summary">
+            <StatsCard
+              color="dark"
+              icon="mdi-monitor-cellphone-star"
+              title="Top Device"
+              :value="summary.topDevice"
+            />
+          </v-flex>
+          <v-flex sm6 xs12 md6 lg4 v-if="forecasts">
+            <StatsCard
+              color="purple"
+              icon="mdi-feature-search"
+              title="Tomorrow visits"
+              :value="forecasts.nextDayVisitors"
+            />
+          </v-flex>
+          <v-flex sm6 xs12 md6 lg4 v-if="forecasts">
+            <StatsCard
+              color="purple"
+              icon="mdi-feature-search"
+              title="Tomorrow connected"
+              :value="forecasts.nextDayConnected"
+            />
+          </v-flex>
+          <v-flex sm6 xs12 md6 lg4 v-if="forecasts">
+            <StatsCard
+              color="purple"
+              icon="mdi-feature-search"
+              title="Tomorrow passerby"
+              :value="forecasts.nextDayPasserby"
+            />
+          </v-flex>
+          <v-flex xs12 md8>
+            <RepeatVisitorsInterval />
+          </v-flex>
+          <v-flex xs12 md4>
+            <RepeatVisitors />
+          </v-flex>
+          <v-flex xs12 md8>
+            <ProximityInterval />
+          </v-flex>
+          <v-flex xs12 md4>
+            <Proximity :data="summary" />
+          </v-flex>
+          <v-flex xs12 md8>
+            <DwellInterval />
+          </v-flex>
+          <v-flex xs12 md4>
+            <DwellCount />
+          </v-flex>
+          <v-flex xs12>
+            <DwellDaily />
+          </v-flex>
+          <v-flex xs12>
+            <DwellDailyAverage />
+          </v-flex>
+          <v-flex xs12>
+            <ConnectedDaily />
           </v-flex>
         </v-layout>
-      </v-flex>
-      <v-flex sm6 xs12 md6 lg4 v-if="summary">
-        <StatsCard
-          color="primary"
-          icon="mdi-account-multiple"
-          title="Total visitors"
-          :value="summary.totalVisitors"
-        />
-      </v-flex>
-      <v-flex sm6 xs12 md6 lg4 v-if="summary">
-        <StatsCard
-          color="blue"
-          icon="mdi-av-timer"
-          title="Average Dwell Time"
-          :value="summary.dwellTime"
-          small-value="mins"
-        />
-      </v-flex>
-      <v-flex sm6 xs12 md6 lg4 v-if="summary">
-        <StatsCard
-          color="red"
-          icon="mdi-store-24-hour"
-          title="Peak Hour"
-          :value="summary.peakHour"
-        />
-      </v-flex>
-      <v-flex sm6 xs12 md6 lg4 v-if="summary">
-        <StatsCard
-          color="orange"
-          icon="mdi-star"
-          title="Conversion Rate"
-          :value="summary.conversionRate"
-          small-value="%"
-        />
-      </v-flex>
-      <v-flex sm6 xs12 md6 lg4 v-if="summary">
-        <StatsCard
-          color="dark"
-          icon="mdi-monitor-cellphone-star"
-          title="Top Device"
-          :value="summary.topDevice"
-        />
-      </v-flex>
-      <v-flex sm6 xs12 md6 lg4 v-if="forecasts">
-        <StatsCard
-          color="purple"
-          icon="mdi-feature-search"
-          title="Tomorrow visits"
-          :value="forecasts.nextDayVisitors"
-        />
-      </v-flex>
-      <v-flex sm6 xs12 md6 lg4 v-if="forecasts">
-        <StatsCard
-          color="purple"
-          icon="mdi-feature-search"
-          title="Tomorrow connected"
-          :value="forecasts.nextDayConnected"
-        />
-      </v-flex>
-      <v-flex sm6 xs12 md6 lg4 v-if="forecasts">
-        <StatsCard
-          color="purple"
-          icon="mdi-feature-search"
-          title="Tomorrow passerby"
-          :value="forecasts.nextDayPasserby"
-        />
-      </v-flex>
-      <v-flex xs12 md8>
-        <RepeatVisitorsInterval />
-      </v-flex>
-      <v-flex xs12 md4>
-        <RepeatVisitors />
-      </v-flex>
-      <v-flex xs12 md8>
-        <ProximityInterval />
-      </v-flex>
-      <v-flex xs12 md4>
-        <Proximity :data="summary" />
-      </v-flex>
-      <v-flex xs12 md8>
-        <DwellInterval />
-      </v-flex>
-      <v-flex xs12 md4>
-        <DwellCount />
-      </v-flex>
-      <v-flex xs12>
-        <DwellDaily />
-      </v-flex>
-      <v-flex xs12>
-        <DwellDailyAverage />
-      </v-flex>
-      <v-flex xs12>
-        <ConnectedDaily />
-      </v-flex>
+      </v-container>
     </v-layout>
-  </v-container>
+  </v-layout>
 </template>
 
 <script>
@@ -149,6 +171,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       sites: [],
       site: null,
       summary: null,
@@ -214,14 +237,17 @@ export default {
   },
   async mounted() {
     this.sites = await api.getConfig();
-    this.setSite(this.sites[0].value);
-    this.site = this.sites[0].value;
-    await this.getData();
-    this.date = [
-      new Date(this.params.startDate),
-      new Date(this.params.endDate)
-    ];
-    this.forecasts = await api.getForecastData(this.params);
+    if (this.sites.length) {
+      this.loading = false;
+      this.setSite(this.sites[0].value);
+      this.site = this.sites[0].value;
+      await this.getData();
+      this.date = [
+        new Date(this.params.startDate),
+        new Date(this.params.endDate)
+      ];
+      this.forecasts = await api.getForecastData(this.params);
+    }
   },
   computed: {
     ...mapGetters("params", ["params"])
