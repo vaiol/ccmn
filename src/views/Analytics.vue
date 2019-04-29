@@ -24,15 +24,15 @@
       <v-flex sm6 xs12 md6 lg6 v-if="summary">
         <StatsCard
           color="primary"
-          icon="mdi-store"
+          icon="mdi-account-multiple"
           title="Total visitors"
           :value="summary.totalVisitors"
         />
       </v-flex>
       <v-flex sm6 xs12 md6 lg6 v-if="summary">
         <StatsCard
-          color="primary"
-          icon="mdi-store"
+          color="blue"
+          icon="mdi-av-timer"
           title="Average Dwell Time"
           :value="summary.dwellTime"
           small-value="mins"
@@ -40,8 +40,8 @@
       </v-flex>
       <v-flex sm6 xs12 md6 lg4 v-if="summary">
         <StatsCard
-          color="orange"
-          icon="mdi-content-copy"
+          color="red"
+          icon="mdi-store-24-hour"
           title="Peak Hour"
           :value="summary.peakHour"
         />
@@ -49,7 +49,7 @@
       <v-flex sm6 xs12 md6 lg4 v-if="summary">
         <StatsCard
           color="orange"
-          icon="mdi-content-copy"
+          icon="mdi-star"
           title="Conversion Rate"
           :value="summary.conversionRate"
           small-value="%"
@@ -57,8 +57,8 @@
       </v-flex>
       <v-flex sm6 xs12 md6 lg4 v-if="summary">
         <StatsCard
-          color="orange"
-          icon="mdi-content-copy"
+          color="dark"
+          icon="mdi-monitor-cellphone-star"
           title="Top Device"
           :value="summary.topDevice"
         />
