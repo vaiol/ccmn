@@ -1,8 +1,14 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-layout row wrap>
-    <v-layout v-if="loading" align-center justify-center fill-height>
+    <v-layout
+      v-if="loading"
+      align-center
+      justify-center
+      fill-height
+      class="pb-2"
+    >
       <v-progress-circular
-        :size="70"
+        :size="50"
         :width="7"
         color="green"
         indeterminate
@@ -77,11 +83,6 @@
 
       <div class="text-xs-center">
         <v-bottom-sheet v-model="sheet">
-          <template v-slot:activator>
-            <v-btn color="purple" dark>
-              Click me
-            </v-btn>
-          </template>
           <v-list>
             <v-subheader>ACCESS POINT</v-subheader>
             <v-list-tile
@@ -95,10 +96,10 @@
                   <img src="../../public/img/check.png" :alt="tile.title" />
                 </v-avatar>
               </v-list-tile-avatar>
-              <v-list-tile-title
-                ><span class="font-weight-bold">{{ tile.title }}</span>
-                {{ tile.value }}</v-list-tile-title
-              >
+              <v-list-tile-title>
+                <span class="font-weight-bold">{{ tile.title }} </span>
+                <span>{{ tile.value }}</span>
+              </v-list-tile-title>
             </v-list-tile>
           </v-list>
         </v-bottom-sheet>
@@ -223,9 +224,15 @@ export default {
     chooseUser(user) {
       this.user = user;
       this.sheet = true;
+      this.setTileData();
       console.log(user);
     }
   },
+
+  setTileData() {
+    this.tiles[0].value = this.user.apMacAddress;
+  },
+
   async mounted() {
     await this.getMaps();
     this.interval = setInterval(() => {
@@ -246,57 +253,38 @@ export default {
   width: 60%;
 }
 .pin-associated {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #9b9895;
-  opacity: 0.8;
   position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: gray;
+  opacity: 0.9;
 }
 
 .pin-associated:after {
-  content: "";
-  width: 10px;
-  height: 10px;
-  margin: 4px 0 0 4px;
-  background: #2f2f2f;
-  opacity: 0.8;
   position: absolute;
+  width: 12px;
+  height: 12px;
+  content: "";
+  margin: 4px 0 0 4px;
+  background: #000080;
+  opacity: 0.8;
   border-radius: 50%;
 }
 
-.pin-unassociated {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #fe631f;
-  opacity: 0.8;
-  position: absolute;
-}
-
-.pin-unassociated:after {
-  content: "";
-  width: 10px;
-  height: 10px;
-  margin: 4px 0 0 4px;
-  background: #2f2f2f;
-  position: absolute;
-  opacity: 0.8;
-  border-radius: 50%;
-}
 .endpoint {
-  width: 18px;
-  height: 18px;
-  background: #2e9b2d;
   position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #7cfc00;
 }
 
 .endpoint:after {
-  content: "";
-  width: 10px;
-  height: 10px;
-  margin: 4px 0 0 4px;
-  background: #284029;
   position: absolute;
+  width: 12px;
+  height: 12px;
+  content: "";
+  margin: 4px 0 0 4px;
+  background: black;
 }
 </style>
