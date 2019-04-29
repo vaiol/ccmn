@@ -3,26 +3,35 @@ import moment from "moment";
 const state = {
   siteId: null,
   startDate: moment()
-    .subtract(3, "months")
+    .subtract(1, "months")
     .format("YYYY-MM-DD"),
   endDate: moment().format("YYYY-MM-DD"),
   interval: "daily"
 };
 
 const getters = {
-  params: state => ({
-    siteId: state.siteId,
-    startDate: state.startDate,
-    endDate: state.endDate
-  }),
+  params: state => {
+    const res = {
+      siteId: state.siteId,
+      startDate: state.startDate,
+      endDate: state.endDate
+    };
+    if (res.startDate === res.endDate) {
+      res.date = res.startDate;
+    }
+    return res;
+  },
   interval: state => state.interval
 };
 
 const actions = {
-  setPeriod: async function({ commit }, { startDate, endDate, interval }) {
+  setPeriod: async function({ commit }, { startDate, endDate }) {
+    const start = moment(startDate).format("YYYY-MM-DD");
+    const end = moment(endDate).format("YYYY-MM-DD");
+    const interval = start === end ? "hourly" : "daily";
     commit("PERIOD_SET", {
-      startDate: moment(startDate).format("YYYY-MM-DD"),
-      endDate: moment(endDate).format("YYYY-MM-DD"),
+      startDate: start,
+      endDate: end,
       interval
     });
   },

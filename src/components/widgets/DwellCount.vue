@@ -1,46 +1,44 @@
 <template>
   <div v-if="data">
-    <BarChart :chart-data="chartData" :text="text" />
+    <DoughnutChart :chart-data="chartData" :text="text" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import BarChart from "@/components/charts/BarChart";
+import DoughnutChart from "@/components/charts/DoughnutChart";
 import api from "@/api/presence";
 import { LABELS, PERIODS, BACKGROUND_COLORS, BORDER_COLORS } from "@/constants";
 
 export default {
   components: {
-    BarChart
+    DoughnutChart
   },
   data() {
     return {
-      labels: [],
       data: null,
-      text: "Dwell Time"
+      text: "Dwell Time Count"
     };
   },
   computed: {
     ...mapGetters("params", ["params"]),
     chartData() {
       return {
-        labels: this.labels,
-        datasets: PERIODS.map(period => ({
-          label: LABELS[period],
-          backgroundColor: BORDER_COLORS[period],
-          borderColor: BACKGROUND_COLORS[period],
-          data: this.data[period]
-        }))
+        labels: PERIODS.map(period => LABELS[period]),
+        datasets: [
+          {
+            backgroundColor: PERIODS.map(period => BACKGROUND_COLORS[period]),
+            borderColor: PERIODS.map(period => BORDER_COLORS[period]),
+            data: this.data
+          }
+        ]
       };
     }
   },
   methods: {
     async getData() {
       if (this.params.siteId) {
-        const { labels, data } = await api.dwell(this.params, this.interval);
-        this.labels = labels;
-        this.data = data;
+        this.data = await api.dwellCount(this.params);
       }
     }
   },

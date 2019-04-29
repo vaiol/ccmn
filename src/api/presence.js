@@ -1,5 +1,6 @@
 import axios from "axios";
 import moment from "moment";
+import Vue from "vue";
 
 import {
   FIVE_TO_EIGHT_HOURS,
@@ -22,6 +23,29 @@ const HTTP = axios.create({
   crossdomain: true,
   withCredentials: false
 });
+
+HTTP.interceptors.response.use(
+  response => {
+    return response;
+  },
+  error => {
+    console.log(JSON.stringify(error, null, 4));
+    const msg =
+      error &&
+      error.response &&
+      error.response.config &&
+      error.response.config.url
+        ? error.response.config.url
+        : "Unspecified URL";
+    Vue.notify({
+      group: "http",
+      type: "error",
+      title: `${error}`,
+      text: msg
+    });
+    return error.response;
+  }
+);
 
 export default {
   async connectedDaily(start, end, siteId) {
@@ -215,7 +239,6 @@ export default {
     );
   },
   async getSummary(params) {
-    params.date = moment().format("YYYY-MM-DD");
     const url = "/presence/v1/kpisummary/";
     let res = {};
     const { data } = await HTTP.get(url, { params });

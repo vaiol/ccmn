@@ -18,7 +18,7 @@ export default {
     return {
       labels: TIMES_LABELS,
       data: null,
-      text: "Repeat Visitors Distribution"
+      text: "Repeat Visitors Count"
     };
   },
   computed: {

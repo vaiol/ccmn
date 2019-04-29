@@ -1,34 +1,36 @@
 <template>
   <div v-if="data">
-    <DoughnutChart :chart-data="chartData" :text="text" />
+    <BarChart :chart-data="chartData" :text="text" />
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
-import DoughnutChart from "@/components/charts/DoughnutChart";
+import BarChart from "@/components/charts/BarChart";
 import api from "@/api/presence";
-import { LABELS, PERIODS, BACKGROUND_COLORS, BORDER_COLORS } from "@/constants";
+import { WEEK_DAYS, BACKGROUND_COLORS, BORDER_COLORS } from "@/constants";
 
 export default {
   components: {
-    DoughnutChart
+    BarChart
   },
   data() {
     return {
       data: null,
-      text: "Dwell Time Distribution" // TODO change text and file name
+      text: "Average Daily Users Connection",
+      label: "Connected users"
     };
   },
   computed: {
     ...mapGetters("params", ["params"]),
     chartData() {
       return {
-        labels: PERIODS.map(period => LABELS[period]),
+        labels: WEEK_DAYS,
         datasets: [
           {
-            backgroundColor: PERIODS.map(period => BACKGROUND_COLORS[period]),
-            borderColor: PERIODS.map(period => BORDER_COLORS[period]),
+            label: this.label,
+            backgroundColor: Object.values(BORDER_COLORS)[0],
+            borderColor: Object.values(BACKGROUND_COLORS)[0],
             data: this.data
           }
         ]
@@ -38,7 +40,7 @@ export default {
   methods: {
     async getData() {
       if (this.params.siteId) {
-        this.data = api.dwellCount(this.params);
+        this.data = await api.connectedDaily(null, null, this.params.siteId);
       }
     }
   },

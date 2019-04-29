@@ -8,7 +8,7 @@
 import { mapGetters } from "vuex";
 import BarChart from "@/components/charts/BarChart";
 import api from "@/api/presence";
-import { WEEK_DAYS, BACKGROUND_COLORS, BORDER_COLORS } from "@/constants";
+import { LABELS, PERIODS, BACKGROUND_COLORS, BORDER_COLORS } from "@/constants";
 
 export default {
   components: {
@@ -16,31 +16,31 @@ export default {
   },
   data() {
     return {
+      labels: [],
       data: null,
-      text: "Daily Correlation Users by Connected Users",
-      label: "Connected users"
+      text: "Dwell Time Interval"
     };
   },
   computed: {
-    ...mapGetters("params", ["params"]),
+    ...mapGetters("params", ["params", "interval"]),
     chartData() {
       return {
-        labels: WEEK_DAYS,
-        datasets: [
-          {
-            label: this.label,
-            backgroundColor: Object.values(BORDER_COLORS)[0],
-            borderColor: Object.values(BACKGROUND_COLORS)[0],
-            data: this.data
-          }
-        ]
+        labels: this.labels,
+        datasets: PERIODS.map(period => ({
+          label: LABELS[period],
+          backgroundColor: BORDER_COLORS[period],
+          borderColor: BACKGROUND_COLORS[period],
+          data: this.data[period]
+        }))
       };
     }
   },
   methods: {
     async getData() {
       if (this.params.siteId) {
-        this.data = await api.connectedDaily(null, null, this.params.siteId);
+        const { labels, data } = await api.dwell(this.params, this.interval);
+        this.labels = labels;
+        this.data = data;
       }
     }
   },

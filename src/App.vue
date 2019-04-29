@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <notifications group="http" />
     <StyleManager />
     <Toolbar />
     <Drawer />

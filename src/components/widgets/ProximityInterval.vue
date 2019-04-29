@@ -31,7 +31,6 @@ export default {
     ...mapGetters("params", ["params", "interval"]),
     chartData() {
       return {
-        // TODO add constants
         labels: this.labels,
         datasets: [
           {
