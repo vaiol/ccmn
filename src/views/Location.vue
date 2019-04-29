@@ -1,11 +1,6 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
   <v-layout row wrap>
-    <v-layout
-      v-if="loading && !maps.length"
-      align-center
-      justify-center
-      fill-height
-    >
+    <v-layout v-if="loading" align-center justify-center fill-height>
       <v-progress-circular
         :size="70"
         :width="7"
@@ -14,7 +9,7 @@
       ></v-progress-circular>
     </v-layout>
 
-    <div v-if="!loading && maps.length" class="w-100">
+    <div class="w-100">
       <div>
         <v-toolbar tabs class="toolbar">
           <div class="w-60">
@@ -22,7 +17,7 @@
               Total users: {{ users.length }}
             </div>
             <div class="font-weight-bold text-gray font-size">
-              At floor: {{ users.length }}
+              At floor: {{ currentFloorUsers.length }}
             </div>
           </div>
           <v-select :items="maps" v-model="floors" label="Map"></v-select>
@@ -34,17 +29,6 @@
             prepend-inner-icon="search"
             solo-inverted
           ></v-text-field>
-          <!--        <div-->
-          <!--          v-for="endPoint in accessPoints"-->
-          <!--          class="endpoint"-->
-          <!--          :style="-->
-          <!--            setStyles(-->
-          <!--              relativeX(endPoint.mapCoordinates.x),-->
-          <!--              relativeY(endPoint.mapCoordinates.y),-->
-          <!--              -1-->
-          <!--            )-->
-          <!--          "-->
-          <!--        ></div>-->
           <template v-slot:extension v-if="floors">
             <v-tabs
               v-model="tab"
@@ -61,7 +45,29 @@
           <v-tab-item v-for="floor in floors" :key="floor.floorNumber">
             <v-card>
               <v-card-text>
-                <v-img :src="floor.image.src" class="grey darken-4"></v-img>
+                <v-img id="imgMap" :src="floor.image.src" class="grey darken-4">
+                  <div
+                    v-for="(user, index) in currentFloorUsers"
+                    :key="user"
+                    class="pin-associated"
+                    :style="setStyles(user.styles.x, user.styles.y, index)"
+                    @click="chooseUser(user)"
+                  ></div>
+                  <div v-if="currentFloor">
+                    <div
+                      v-for="endPoint in accessPoints"
+                      :key="endPoint"
+                      class="endpoint"
+                      :style="
+                        setStyles(
+                          relativeX(endPoint.mapCoordinates.x),
+                          relativeY(endPoint.mapCoordinates.y),
+                          -1
+                        )
+                      "
+                    ></div>
+                  </div>
+                </v-img>
               </v-card-text>
             </v-card>
           </v-tab-item>
@@ -108,12 +114,14 @@ export default {
   name: "location",
   data() {
     return {
+      mapWidth: 0,
+      mapHeight: 0,
       tab: null,
       users: [],
+      user: null,
       floors: null,
       maps: [],
       imageURL: null,
-      loading: true,
 
       sheet: false,
       tiles: [
@@ -139,60 +147,90 @@ export default {
   },
   computed: {
     accessPoints() {
-      return this.currentFloor.info.accessPoints;
+      if (this.floors[this.tab]) {
+        return this.floors[this.tab].accessPoints;
+      } else {
+        return [];
+      }
+    },
+    currentFloor() {
+      return this.floors[this.tab];
+    },
+    currentFloorUsers() {
+      let result = [];
+      this.users.forEach(el => {
+        if (el.mapInfo.floorRefId === this.currentFloor.aesUidString) {
+          el.styles = {};
+          el.styles.x = this.relativeX(el.mapCoordinate.x);
+          el.styles.y = this.relativeY(el.mapCoordinate.y);
+          result.push(el);
+        }
+      });
+      return result;
+    },
+    loading() {
+      return !this.maps.length || !this.users.length;
     }
   },
   methods: {
     async getMaps() {
       this.maps = await api.getAllMaps();
       if (this.maps.length) {
-        this.loading = false;
         this.floors = this.maps[0].value;
       }
     },
     async getUsers() {
       this.users = await api.getUsers();
+    },
+    relativeX: function(x) {
+      let map = document.getElementById("imgMap");
+      if (!map) {
+        return 0;
+      }
+      const mapW = map.offsetWidth;
+      let relative = (mapW * x) / this.currentFloor.dimension.width / mapW;
+      return relative * 100;
+    },
+    relativeY: function(y) {
+      let map = document.getElementById("imgMap");
+      if (!map) {
+        return 0;
+      }
+      const mapH = map.offsetHeight;
+      let relative = (mapH * y) / this.currentFloor.dimension.length / mapH;
+      return relative * 100;
+    },
+    setStyles(x, y, index) {
+      let styles = {};
+      if (index === 4) {
+        styles = {
+          left: x + "%",
+          top: y + "%",
+          backgroundColor: "red",
+          boxShadow:
+            "0 0 10px rgba(0,0,0,0.7), 0 0 20px rgba(0,0,0,0.7), 0 0 30px rgba(0,0,0,0.7)",
+          opacity: 1,
+          zIndex: 100
+        };
+      } else {
+        styles = {
+          left: x + "%",
+          top: y + "%"
+        };
+      }
+      return styles;
+    },
+    chooseUser(user) {
+      this.user = user;
+      this.sheet = true;
+      console.log(user);
     }
-    // setStyles(x, y, index) {
-    //   let styles = {};
-    //   if (index === this.chosenIndex) {
-    //     styles = {
-    //       left: x + "%",
-    //       top: y + "%",
-    //       backgroundColor: "red",
-    //       boxShadow:
-    //         "0 0 10px rgba(0,0,0,0.7), 0 0 20px rgba(0,0,0,0.7), 0 0 30px rgba(0,0,0,0.7)",
-    //       opacity: 1,
-    //       zIndex: 100
-    //     };
-    //   } else {
-    //     styles = {
-    //       left: x + "%",
-    //       top: y + "%"
-    //     };
-    //   }
-    //   return styles;
-    // },
-    // relativeX: function(x) {
-    //   let relative =
-    //     (this.mapWidth * x) /
-    //     this.currentFloor.info.dimension.width /
-    //     this.mapWidth;
-    //   return relative * 100;
-    // },
-    // relativeY: function(y) {
-    //   let relative =
-    //     (this.mapHeight * y) /
-    //     this.currentFloor.info.dimension.length /
-    //     this.mapHeight;
-    //   return relative * 100;
-    // }
   },
   async mounted() {
-    this.getMaps();
+    await this.getMaps();
     this.interval = setInterval(() => {
       this.getUsers();
-    }, 5000);
+    }, 2000);
   }
 };
 </script>
@@ -206,5 +244,59 @@ export default {
 }
 .w-60 {
   width: 60%;
+}
+.pin-associated {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #9b9895;
+  opacity: 0.8;
+  position: absolute;
+}
+
+.pin-associated:after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  margin: 4px 0 0 4px;
+  background: #2f2f2f;
+  opacity: 0.8;
+  position: absolute;
+  border-radius: 50%;
+}
+
+.pin-unassociated {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fe631f;
+  opacity: 0.8;
+  position: absolute;
+}
+
+.pin-unassociated:after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  margin: 4px 0 0 4px;
+  background: #2f2f2f;
+  position: absolute;
+  opacity: 0.8;
+  border-radius: 50%;
+}
+.endpoint {
+  width: 18px;
+  height: 18px;
+  background: #2e9b2d;
+  position: absolute;
+}
+
+.endpoint:after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  margin: 4px 0 0 4px;
+  background: #284029;
+  position: absolute;
 }
 </style>
