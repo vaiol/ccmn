@@ -13,19 +13,19 @@ export const PERIODS = [
 ];
 
 export const BACKGROUND_COLORS = {
-  [FIVE_TO_THIRTY_MINUTES]: "#28a745",
-  [THIRTY_TO_SIXTY_MINUTES]: "#DC3545",
+  [FIVE_TO_THIRTY_MINUTES]: "#4caf50",
+  [THIRTY_TO_SIXTY_MINUTES]: "#e53935",
   [ONE_TO_FIVE_HOURS]: "#007bff",
-  [FIVE_TO_EIGHT_HOURS]: "#FFC107",
-  [EIGHT_PLUS_HOURS]: "#17a2b8"
+  [FIVE_TO_EIGHT_HOURS]: "#fb8c00",
+  [EIGHT_PLUS_HOURS]: "#9c27b0"
 };
 
 export const BORDER_COLORS = {
-  [FIVE_TO_THIRTY_MINUTES]: "rgba(40,167,69,0.5)",
-  [THIRTY_TO_SIXTY_MINUTES]: "rgba(220,53,69,0.5)",
+  [FIVE_TO_THIRTY_MINUTES]: "rgba(76,175,80,0.5)",
+  [THIRTY_TO_SIXTY_MINUTES]: "rgba(229, 57, 53,0.5)",
   [ONE_TO_FIVE_HOURS]: "rgba(0, 123, 255, 0.5)",
-  [FIVE_TO_EIGHT_HOURS]: "rgba(255,193,7,0.5)",
-  [EIGHT_PLUS_HOURS]: "rgba(23,162,184,0.5)"
+  [FIVE_TO_EIGHT_HOURS]: "rgba(251, 140, 0,0.5)",
+  [EIGHT_PLUS_HOURS]: "rgba(156, 39, 176, 0.5)"
 };
 
 export const LABELS = {
